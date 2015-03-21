@@ -9,8 +9,20 @@
     tools:context="com.example.customcookbook.MainActivity" >
 
     <TextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentTop="true"
+        android:text="@string/welcome"
+        android:textSize="24sp" />
+    
+    <Button
+        android:id="@+id/add_recipe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_centerHorizontal="true"
+        android:text="Add Recipe"
+        android:onClick="findOCR"/>
 
 </RelativeLayout>
