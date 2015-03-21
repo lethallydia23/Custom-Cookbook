@@ -3,6 +3,8 @@ package com.example.customcookbook;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -22,7 +24,31 @@ public class MainActivity extends Activity
 		
 	}
 
+	//This method will be called when the user clicks the "Instructions" button. It generates a dialog box that tells the user how
+	//to interact with the program.
+	public void instructions(View view)
+	{
+		new AlertDialog.Builder(this)
+		.setTitle("Instructions for Custom Cookbook")
+		.setMessage(String.format("ADDING RECIPES:\n1. Click the \"Add Recipe\" button on the home screen.\n2. When OCR"+
+		" Instantly Free opens, select and set a language.\n3. Follow the in-app instructions to take a photo of your recipe."+
+		" Print usually works best!\n4. Copy the extracted text to the clipboard, then come back to Custom Cookbook."))
+		.setPositiveButton("Got it!", new DialogInterface.OnClickListener()
+			{
+				public void onClick(DialogInterface dialog, int which)
+				{
+					dialog.cancel();
+				}
+			
+			})
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.show();
+	}
 	
+	//This method is called when the user needs to add a recipe to the cookbook. It is responsible for locating the OCR Instantly Free
+	//app and opening it, assuming the app is already installed on the user's device.
+	//FUTURE WORK:
+	//-Add support for installing the app if it is not on the phone
 	public void findOCR(View view)
 	{  
 		//Code from StackOverflow user Sahil Mahajan Mj (Posted Dec 3 2012 @ 
@@ -51,6 +77,7 @@ public class MainActivity extends Activity
 	    //End StackOverflow Code
 	    
 	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) 
 	{
