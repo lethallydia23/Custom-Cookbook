@@ -6,9 +6,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,8 +22,31 @@ public class MainActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		onResume();
 		
+	}
+	
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		
+		//Find out if a recipe is currently being added
+		boolean complete;
+		SharedPreferences last = getSharedPreferences("Recipe Settings",MODE_PRIVATE);
+		complete = last.getBoolean("Complete", true);
+		
+		//If so, call the AddRecipe class
+		if(!complete)
+		{
+			Intent intent = new Intent(MainActivity.this, AddRecipe.class);
+			startActivity(intent);
+		}
+		//Otherwise, display the home screen
+		else
+		{
+			setContentView(R.layout.activity_main);
+		}
 	}
 
 	//This method will be called when the user clicks the "Instructions" button. It generates a dialog box that tells the user how
@@ -65,6 +90,9 @@ public class MainActivity extends Activity
 	       if(str.contains("OCR Instantly Free"))
 	       {
 	    	   String packName = rInfo.activityInfo.packageName;
+	    	   SharedPreferences.Editor last = getSharedPreferences("Recipe Settings",MODE_PRIVATE).edit();
+	    	   last.putBoolean("Complete", false);
+	    	   last.commit();
 	    	   //Code from community wiki @ 
 	    	   //http://stackoverflow.com/questions/2780102/open-another-application-from-your-own-intent/7596063#7596063
 	    	   Intent openApp = pm.getLaunchIntentForPackage(packName);

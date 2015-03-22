@@ -4,5 +4,7 @@
     <string name="app_name">Custom Cookbook</string>
     <string name="welcome">Welcome to your Custom Cookbook!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_add_recipe">AddRecipe</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
