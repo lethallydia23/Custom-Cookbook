@@ -1,11 +1,16 @@
 package com.example.customcookbook;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 /*
@@ -36,6 +41,9 @@ public class AddRecipe extends Activity
 		last.putBoolean("Complete", true);
 		last.commit();
 		
+		//Store the recipe in internal memory
+		store();
+		
 		//Notify the user the recipe was stored
 		Toast.makeText(AddRecipe.this, "Recipe saved!", Toast.LENGTH_SHORT).show();
 		
@@ -53,6 +61,42 @@ public class AddRecipe extends Activity
 		
 		//Take user back to previous activity.
 		finish();
+	}
+	
+	//Stores the contents of the text field into the phone's internal storage
+	public void store()
+	{
+		//File for storage
+		String file = "Recipes";
+		
+		//Retrieve info from text fields
+		//NAME
+		EditText name_field = (EditText) findViewById(R.id.name_field);
+		String name = name_field.getText().toString();
+		//INGREDIENTS
+		EditText ingred_field = (EditText) findViewById(R.id.ingredient_field);
+		String ingreds = ingred_field.getText().toString();
+		//INSTRUCTIONS
+		EditText instruct_field = (EditText) findViewById(R.id.instruction_field);
+		String instruct = instruct_field.getText().toString();
+		
+		Recipe newRecipe = new Recipe(name);
+		newRecipe.addIngredient(ingreds);
+		newRecipe.setSteps(instruct);
+		try
+		{
+			FileOutputStream out = openFileOutput(file, MODE_PRIVATE);
+			out.write(newRecipe.toString().getBytes());
+			out.close();
+		}
+		catch(FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch(IOException f)
+		{
+			f.printStackTrace();
+		}
 	}
 
 	@Override

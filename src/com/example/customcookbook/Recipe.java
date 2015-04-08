@@ -1,5 +1,8 @@
 package com.example.customcookbook;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /*
@@ -14,17 +17,17 @@ public class Recipe
 {
 	//Parameters
 	String name;
-	ArrayList<String> ingredients;
+	String ingredients;
 	//Maybe add an image parameter to store photo of recipe?
-	StringBuffer steps;	//If we save the image, this param may be deleted
+	String steps;	//If we save the image, this param may be deleted
 	
 	//Default constructor
 	public Recipe()
 	{
 		//Initialize empty params
 		name="";
-		ingredients = new ArrayList<String>();
-		steps = new StringBuffer();
+		ingredients = "";
+		steps = "";
 		
 	}
 	
@@ -32,8 +35,8 @@ public class Recipe
 	public Recipe(String name)
 	{
 		this.name = name;
-		ingredients = new ArrayList<String>();
-		steps = new StringBuffer();
+		ingredients = "";
+		steps = "";
 	}
 	
 	//SET AND GET METHODS
@@ -45,10 +48,10 @@ public class Recipe
 	
 	public void addIngredient(String ingred)
 	{
-		ingredients.add(ingred);
+		ingredients = ingred;
 	}
 	
-	public void setSteps(StringBuffer steps)
+	public void setSteps(String steps)
 	{
 		this.steps  = steps;
 	}
@@ -58,29 +61,77 @@ public class Recipe
 		return this.name;
 	}
 	
-	public String getIngredient(int index)
+	public String getIngredient()
 	{
-		return this.ingredients.get(index);
+		return ingredients;
 	}
 	
-	public StringBuffer getSteps()
+	public String getSteps()
 	{
 		return this.steps;
+	}
+	
+	//This method reads all Recipes from the app's "Recipes" text file
+	public static ArrayList<Recipe> findAll(FileInputStream input)
+	{
+		boolean done = false;
+		int index = 0;
+		ArrayList<Recipe> allRecipes = new ArrayList<Recipe>();
+		try
+		{
+			byte [] bytes = new byte[input.available()];
+			input.read(bytes);
+			String info = new String(bytes);
+			Recipe next;
+			
+			//This StringBuffer contains all recipes stored.
+			StringBuffer result = new StringBuffer(info);
+			
+			System.out.println(result);
+			done = result.length() == index;
+			
+			//Create Recipe objects
+			while(!done)
+			{
+				next = new Recipe();
+				next.setName(result.substring(result.indexOf("RECIPE:"+8), result.indexOf("INGREDIENTS:")));
+				next.addIngredient(result.substring(result.indexOf("INGREDIENTS:"+13), result.indexOf("INSTRUCTIONS:")));
+				next.setSteps(result.substring(result.indexOf("INSTRUCTIONS:"+14), result.length()));
+				
+				//Add Recipe objects to the list
+				allRecipes.add(next);
+				
+				done = result.length() == index;
+			}
+			
+		}
+		catch(FileNotFoundException e)
+		{
+			e.printStackTrace();
+			
+		}
+		catch(IOException f)
+		{
+			f.printStackTrace();
+		}
+		
+		return allRecipes;
+	}
+	
+	public boolean contains(String keyword)
+	{
+		return (this.name.contains(keyword) || this.ingredients.contains(keyword) || this.steps.contains(keyword));
 	}
 	
 	public String toString()
 	{
 		String result = "";
-		int counter = 0;
 		
-		result = String.format("%s:\n", name);
+		result = String.format("RECIPE: %s\n", name);
 		
-		for(counter = 0; counter < ingredients.size(); counter++)
-		{
-			result+=String.format("%d. %s\n", counter+1, ingredients.get(counter));
-		}
+		result+="INGREDIENTS:\n"+ingredients+"\n";
 		
-		result+=steps;
+		result+="INSTRUCTIONS:\n"+steps;
 		
 		return result;
 	}

@@ -106,6 +106,12 @@ public class MainActivity extends Activity
 	    
 	}
 	
+	public void readRecipes(View view)
+	{
+		Intent intent = new Intent(MainActivity.this, GetRecipe.class);
+		startActivity(intent);
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) 
 	{

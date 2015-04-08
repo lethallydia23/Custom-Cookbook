@@ -33,5 +33,14 @@
         android:layout_centerHorizontal="true"
         android:text="Add Recipe"
         android:onClick="findOCR"/>
+    
+    <Button
+        android:id="@+id/view_recipe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/add_recipe"
+        android:layout_centerHorizontal="true"
+        android:text="View Recipes"
+        android:onClick="readRecipes"/>
 
 </RelativeLayout>
