@@ -42,5 +42,14 @@
         android:layout_centerHorizontal="true"
         android:text="View Recipes"
         android:onClick="readRecipes"/>
+    
+    <Button
+        android:id="@+id/search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_recipe"
+        android:layout_centerHorizontal="true"
+        android:text="Search for Recipes"
+        android:onClick="search"/>
 
 </RelativeLayout>

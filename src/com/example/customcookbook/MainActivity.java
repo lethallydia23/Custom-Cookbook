@@ -112,6 +112,11 @@ public class MainActivity extends Activity
 		startActivity(intent);
 	}
 	
+	public void search(View view)
+	{
+		Intent intent = new Intent(MainActivity.this, FindRecipe.class);
+		startActivity(intent);
+	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) 
 	{
