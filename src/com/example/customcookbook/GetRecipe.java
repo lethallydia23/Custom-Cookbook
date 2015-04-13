@@ -1,14 +1,14 @@
 package com.example.customcookbook;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 public class GetRecipe extends Activity {
 
@@ -19,6 +19,17 @@ public class GetRecipe extends Activity {
 		setContentView(R.layout.activity_get_recipe);
 		
 		ArrayList<Recipe> recipes = findAll();
+		
+		TextView recipeText = new TextView(GetRecipe.this);
+		
+		for(int counter  = 0; counter < recipes.size(); counter++)
+		{
+			recipeText.setText(""+recipeText.getText()+recipes.get(counter));
+		}
+		
+		ScrollView scroll = (ScrollView) findViewById(R.id.scroll);
+		scroll.addView(recipeText);
+		setContentView(scroll);
 		
 	}
 	
@@ -31,6 +42,7 @@ public class GetRecipe extends Activity {
 		{
 			FileInputStream input = openFileInput("Recipes");
 			allRecipes = Recipe.findAll(input);
+			input.close();
 		}
 		catch(Exception e)
 		{

@@ -1,5 +1,6 @@
 package com.example.customcookbook;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -83,25 +84,40 @@ public class Recipe
 			input.read(bytes);
 			String info = new String(bytes);
 			Recipe next;
+			input.close();
 			
 			//This StringBuffer contains all recipes stored.
 			StringBuffer result = new StringBuffer(info);
 			
-			System.out.println(result);
+			//TEST THAT INFO IS READ
 			done = result.length() == index;
 			
 			//Create Recipe objects
 			while(!done)
 			{
 				next = new Recipe();
-				next.setName(result.substring(result.indexOf("RECIPE:"+8), result.indexOf("INGREDIENTS:")));
-				next.addIngredient(result.substring(result.indexOf("INGREDIENTS:"+13), result.indexOf("INSTRUCTIONS:")));
-				next.setSteps(result.substring(result.indexOf("INSTRUCTIONS:"+14), result.length()));
+				next.setName(result.substring(result.indexOf("RECIPE:")+8, result.indexOf("INGREDIENTS:")));
+				result.delete(0, result.indexOf("INGREDIENTS:"));
+				System.out.println(next.name);
+				next.addIngredient(result.substring(12, result.indexOf("INSTRUCTIONS:")));
+				result.delete(0, result.indexOf("INSTRUCTIONS:"));
+				System.out.println(next.ingredients);
+				
+				try
+				{
+					next.setSteps(result.substring(14, result.indexOf("RECIPE:")));
+				}
+				catch(Exception d)
+				{
+					next.setSteps(result.substring(14, result.length()));
+				}
+				
+				System.out.println(next.steps);
 				
 				//Add Recipe objects to the list
 				allRecipes.add(next);
 				
-				done = result.length() == index;
+				done = result.indexOf("RECIPE:", result.indexOf("INSTRUCTIONS:")) < 0;
 			}
 			
 		}
@@ -131,7 +147,7 @@ public class Recipe
 		
 		result+="INGREDIENTS:\n"+ingredients+"\n";
 		
-		result+="INSTRUCTIONS:\n"+steps;
+		result+="INSTRUCTIONS:\n"+steps+"\n"+"\n";
 		
 		return result;
 	}

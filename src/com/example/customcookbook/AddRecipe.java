@@ -1,10 +1,13 @@
 package com.example.customcookbook;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -85,7 +88,17 @@ public class AddRecipe extends Activity
 		newRecipe.setSteps(instruct);
 		try
 		{
-			FileOutputStream out = openFileOutput(file, MODE_PRIVATE);
+			FileOutputStream out = openFileOutput(file, Context.MODE_APPEND);
+			if(findAllRecipes()!=null)
+			{
+				ArrayList<Recipe> oldRecipes = findAllRecipes();
+				for(int counter = 0; counter < oldRecipes.size(); counter++)
+				{
+					System.out.println(oldRecipes.get(counter));
+					out.write(oldRecipes.get(counter).toString().getBytes());
+				}
+			}
+			System.out.println(newRecipe);
 			out.write(newRecipe.toString().getBytes());
 			out.close();
 		}
@@ -97,6 +110,24 @@ public class AddRecipe extends Activity
 		{
 			f.printStackTrace();
 		}
+	}
+	
+	public ArrayList<Recipe> findAllRecipes()
+	{
+		ArrayList<Recipe> allRecipes = new ArrayList<Recipe>();
+		
+		try
+		{
+			FileInputStream input = new FileInputStream("Recipes");
+			allRecipes = Recipe.findAll(input);
+			input.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		return allRecipes;
 	}
 
 	@Override
