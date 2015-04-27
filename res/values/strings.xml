@@ -8,5 +8,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_get_recipe">GetRecipe</string>
     <string name="title_activity_find_recipe">FindRecipe</string>
+    <string name="title_activity_show_recipe">ShowRecipe</string>
 
 </resources>

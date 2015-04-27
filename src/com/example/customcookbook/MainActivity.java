@@ -18,6 +18,7 @@ import android.view.View;
 public class MainActivity extends Activity 
 {
 
+	public static final int GET_RECIPE_REQUEST = 1;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
@@ -108,14 +109,33 @@ public class MainActivity extends Activity
 	
 	public void readRecipes(View view)
 	{
-		Intent intent = new Intent(MainActivity.this, GetRecipe.class);
-		startActivity(intent);
+		Intent find = new Intent(MainActivity.this, GetRecipe.class);
+		find.setAction(Intent.ACTION_GET_CONTENT);
+		startActivityForResult(find, GET_RECIPE_REQUEST);
 	}
 	
 	public void search(View view)
 	{
 		Intent intent = new Intent(MainActivity.this, FindRecipe.class);
 		startActivity(intent);
+	}
+	
+	protected void onActivityResult(int aRequestCode, int aResultCode, Intent aData) 
+	{
+		switch (aRequestCode) 
+	    {
+		case GET_RECIPE_REQUEST:
+			if(aResultCode == Activity.RESULT_OK)
+			{
+				Intent display = new Intent(MainActivity.this, ShowRecipe.class);
+				display.putParcelableArrayListExtra("Display", aData.getParcelableArrayListExtra("Recipes"));
+				startActivity(display);
+			}
+			break;
+		default:
+			break;	
+	    }
+		super.onActivityResult(aRequestCode, aResultCode, aData);
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) 

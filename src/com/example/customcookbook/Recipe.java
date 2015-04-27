@@ -1,10 +1,12 @@
 package com.example.customcookbook;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /*
  * Lydia Buzzard
@@ -14,7 +16,7 @@ import java.util.ArrayList;
  * and a StringBuffer of steps. The class contains default and initial value constructors along with basic set/get methods and a
  * toString method for printing the Recipe.
  */
-public class Recipe 
+public class Recipe implements Parcelable
 {
 	//Parameters
 	String name;
@@ -72,73 +74,89 @@ public class Recipe
 		return this.steps;
 	}
 	
-	//This method reads all Recipes from the app's "Recipes" text file
-	public static ArrayList<Recipe> findAll(FileInputStream input)
+	//This method reads the next Recipe found in the StringBuffer info and adds it to the list. It returns the remaining unparsed contents of
+	//the StringBuffer.
+	public static StringBuffer findNext(ArrayList<Recipe> list, StringBuffer info)
 	{
-		boolean done = false;
-		int index = 0;
-		ArrayList<Recipe> allRecipes = new ArrayList<Recipe>();
 		try
 		{
-			byte [] bytes = new byte[input.available()];
-			input.read(bytes);
-			String info = new String(bytes);
-			Recipe next;
-			input.close();
-			
-			//This StringBuffer contains all recipes stored.
-			StringBuffer result = new StringBuffer(info);
-			
-			//TEST THAT INFO IS READ
-			done = result.length() == index;
-			
-			//Create Recipe objects
-			while(!done)
+			if(info.indexOf("RECIPE:") >= 0)
 			{
-				next = new Recipe();
-				next.setName(result.substring(result.indexOf("RECIPE:")+8, result.indexOf("INGREDIENTS:")));
-				result.delete(0, result.indexOf("INGREDIENTS:"));
+				Recipe next = new Recipe();
+				next.setName(info.substring(info.indexOf("RECIPE:")+8, info.indexOf("INGREDIENTS:")));
+				info.delete(0, info.indexOf("INGREDIENTS:"));
 				System.out.println(next.name);
-				next.addIngredient(result.substring(12, result.indexOf("INSTRUCTIONS:")));
-				result.delete(0, result.indexOf("INSTRUCTIONS:"));
+				next.addIngredient(info.substring(12, info.indexOf("INSTRUCTIONS:")));
+				info.delete(0, info.indexOf("INSTRUCTIONS:"));
 				System.out.println(next.ingredients);
 				
 				try
 				{
-					next.setSteps(result.substring(14, result.indexOf("RECIPE:")));
+					next.setSteps(info.substring(14, info.indexOf("RECIPE:")));
+					info.delete(0, info.indexOf(next.steps));
 				}
 				catch(Exception d)
 				{
-					next.setSteps(result.substring(14, result.length()));
+					next.setSteps(info.substring(14, info.length()));
+					info.delete(0, info.length());
 				}
 				
 				System.out.println(next.steps);
 				
-				//Add Recipe objects to the list
-				allRecipes.add(next);
-				
-				done = result.indexOf("RECIPE:", result.indexOf("INSTRUCTIONS:")) < 0;
+				list.add(next);
 			}
 			
 		}
-		catch(FileNotFoundException e)
+		catch(Exception e)
 		{
+			System.out.println("Couldn't parse recipe.");
 			e.printStackTrace();
-			
 		}
-		catch(IOException f)
-		{
-			f.printStackTrace();
-		}
-		
-		return allRecipes;
+		return info;
 	}
 	
 	public boolean contains(String keyword)
 	{
-		return (this.name.contains(keyword) || this.ingredients.contains(keyword) || this.steps.contains(keyword));
+		if(this.name!=null && this.ingredients!=null && this.steps!=null)
+			return (this.name.contains(keyword) || this.ingredients.contains(keyword) || this.steps.contains(keyword));
+		return false;
 	}
 	
+	public Recipe(Parcel in)
+	{
+		System.out.println("Recipe is being created from Parcel");
+		String[] data = new String[3];
+		in.readStringArray(data);
+		this.name = data[0];
+		this.ingredients = data[1];
+		this.steps = data[2];
+		System.out.println(name+" "+ingredients+" "+steps);
+	}
+	
+	public int describeContents()
+	{
+		return 0;
+	}
+	
+	public void writeToParcel(Parcel dest, int flags) 
+	{
+		System.out.println("Recipe is written to Parcel");
+        dest.writeStringArray(new String[] {this.name,
+                                            this.ingredients,
+                                            this.steps});
+    }
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() 
+    {
+        public Recipe createFromParcel(Parcel in) 
+        {
+            return new Recipe(in); 
+        }
+
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+        }
+    };
+    
 	public String toString()
 	{
 		String result = "";

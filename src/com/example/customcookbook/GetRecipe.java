@@ -4,13 +4,13 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
-public class GetRecipe extends Activity {
+public class GetRecipe extends Activity 
+{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -20,16 +20,22 @@ public class GetRecipe extends Activity {
 		
 		ArrayList<Recipe> recipes = findAll();
 		
-		TextView recipeText = new TextView(GetRecipe.this);
-		
-		for(int counter  = 0; counter < recipes.size(); counter++)
+		System.out.println(recipes.size());
+		Intent send = new Intent();
+		if(!recipes.isEmpty())
 		{
-			recipeText.setText(""+recipeText.getText()+recipes.get(counter));
+		Bundle bundle = new Bundle();
+		bundle.putParcelableArrayList("Recipes", recipes);
+		send.putExtras(bundle);
+		setResult(Activity.RESULT_OK, send);
+		finish();
 		}
-		
-		ScrollView scroll = (ScrollView) findViewById(R.id.scroll);
-		scroll.addView(recipeText);
-		setContentView(scroll);
+		else
+		{
+			setResult(Activity.RESULT_CANCELED, send);
+			System.out.println("Recipes were empty");
+			finish();
+		}
 		
 	}
 	
@@ -41,7 +47,15 @@ public class GetRecipe extends Activity {
 		try
 		{
 			FileInputStream input = openFileInput("Recipes");
-			allRecipes = Recipe.findAll(input);
+			byte [] bytes = new byte[input.available()];
+			input.read(bytes);
+			String info = new String(bytes);
+			StringBuffer result = new StringBuffer(info);
+			
+			//Check this
+			while(result.length() != 0)
+				result = Recipe.findNext(allRecipes, result);
+			
 			input.close();
 		}
 		catch(Exception e)
