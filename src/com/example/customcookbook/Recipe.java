@@ -115,11 +115,28 @@ public class Recipe implements Parcelable
 		return info;
 	}
 	
+	//Contains method--make this ignore case. 
+	//Check each word of each element?
 	public boolean contains(String keyword)
 	{
-		if(this.name!=null && this.ingredients!=null && this.steps!=null)
-			return (this.name.contains(keyword) || this.ingredients.contains(keyword) || this.steps.contains(keyword));
-		return false;
+		return (this.containsIgnoreCase(this.name, keyword) || this.containsIgnoreCase(this.ingredients, keyword) ||
+				this.containsIgnoreCase(this.steps, keyword));
+	}
+	
+	//STACK OVERFLOW CODE
+	//http://stackoverflow.com/questions/15824733/option-to-ignore-case-with-contains-method
+	public boolean containsIgnoreCase(final String str, final String searchStr) {
+	    if (str == null || searchStr == null) {
+	        return false;
+	    }
+	    final int len = searchStr.length();
+	    final int max = str.length() - len;
+	    for (int i = 0; i <= max; i++) {
+	        if (str.regionMatches(true, i, searchStr, 0, len)) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 	
 	public Recipe(Parcel in)

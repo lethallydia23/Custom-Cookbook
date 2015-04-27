@@ -24,9 +24,7 @@ public class GetRecipe extends Activity
 		Intent send = new Intent();
 		if(!recipes.isEmpty())
 		{
-		Bundle bundle = new Bundle();
-		bundle.putParcelableArrayList("Recipes", recipes);
-		send.putExtras(bundle);
+		send.putParcelableArrayListExtra("Recipes", recipes);
 		setResult(Activity.RESULT_OK, send);
 		finish();
 		}

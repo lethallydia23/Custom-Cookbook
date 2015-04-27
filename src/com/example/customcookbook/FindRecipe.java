@@ -23,9 +23,6 @@ public class FindRecipe extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_find_recipe);
 		
-		Intent find = new Intent(FindRecipe.this, GetRecipe.class);
-		find.setAction(Intent.ACTION_GET_CONTENT);
-		startActivityForResult(find, GET_RECIPE_REQUEST);
 	}
 	
 	protected void onActivityResult(int aRequestCode, int aResultCode, Intent aData) 
@@ -36,7 +33,7 @@ public class FindRecipe extends Activity
 			if(aResultCode == Activity.RESULT_OK)
 			{
 				Intent display = new Intent(FindRecipe.this, ShowRecipe.class);
-				display.putExtra("Display", search(aData.getParcelableArrayListExtra("Recipes")));
+				display.putParcelableArrayListExtra("Display", search(aData.getParcelableArrayListExtra("Recipes")));
 				startActivity(display);
 			}
 			break;
@@ -74,7 +71,7 @@ public class FindRecipe extends Activity
 			for(Parcelable current: allRecipes)
 			{
 				Recipe newRecipe = (Recipe) current;
-				if(newRecipe.contains(keyword))
+				if(!newRecipe.equals(null) && newRecipe.contains(keyword))
 					matches.add(newRecipe);
 			}
 		}
